@@ -37,4 +37,12 @@ def loss_abs_mae(y_true, y_pred):
     y_pred = tf.cast(y_pred, tf.complex64)
     diff = (merlintf.complex_abs(y_true) - merlintf.complex_abs(y_pred))
     return K.mean(K.sum(tf.sqrt(tf.math.real(tf.math.conj(diff) * diff) + 1e-9), axis=(1, 2, 3)), axis=(0, -1))
-  
+
+
+@tf.function
+def img_ksp_loss(y_true, y_pred):
+    img_loss = y_pred[0]
+    ksp_loss = y_pred[1]
+    total_loss = img_loss + ksp_loss
+    return total_loss
+    
