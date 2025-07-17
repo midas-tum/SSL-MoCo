@@ -15,8 +15,26 @@ from utils import mri, motion_mri
 from model.complex_unet import ComplexUNet_2Dt
 from data_loader.MC_SSL_DataLoader import CINE2DDataset
 
-from organized_code.info_share_layer import Scalar
 
+class Scalar(tf.keras.layers.Layer):
+    def __init__(self, init=1.0, train_scale=1.0, name=None):
+        super().__init__(name=name)
+        self.init = init
+        self.train_scale = train_scale
+
+    def build(self, input_shape):
+        self._weight = self.add_weight(name='scalar',
+                                       shape=(1,),
+                                       constraint=tf.keras.constraints.NonNeg(),
+                                       initializer=tf.keras.initializers.Constant(self.init))
+
+    @property
+    def weight(self):
+        return self._weight * self.train_scale
+
+    def call(self, inputs):
+        return merlintf.complex_scale(inputs, self.weight)
+        
 
 def get_CNN():
     return ComplexUNet_2Dt(dim='2Dt', filters=12, kernel_size_2d=(1, 5, 5), kernel_size_t=(3, 1, 1), downsampling='mp',
@@ -74,8 +92,6 @@ class Hybrid_Net(tf.keras.Model):
         ksp_loss_2 = K.mean(K.sum(tf.sqrt(tf.math.real(tf.math.conj((x2_ksp_mask1 - y1)) * (x2_ksp_mask1 - y1)) + 1e-9)))
 
         ksp_loss = ksp_loss_1 + ksp_loss_2
-        tf.print('img_loss:', img_loss)
-        tf.print('ksp_loss:', ksp_loss)
         return img_loss, ksp_loss
 
     def call(self, inputs):
@@ -125,12 +141,12 @@ def main(train_min_R, train_max_R, val_min_R, val_max_R):
     print(model.summary())
 
     fold = 26
-    exp_dir = '/home/studxusiy1/mr_recon/03_cine2dt/experiments/fold__%d__/R__%d__%d' % (fold, train_min_R, train_max_R)
+    exp_dir = 'experiments/fold__%d__/R__%d__%d' % (fold, train_min_R, train_max_R)
     log_dir = os.path.join(exp_dir, model.name + '-' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     history = model.fit(ds_train, epochs=500, validation_data=ds_val, max_queue_size=1,
                         callbacks=callbacks.get_callbacks(ds_val, model, log_dir))
 
 if __name__ == '__main__':
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "6, 7"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
     main(train_min_R=2, train_max_R=24, val_min_R=12, val_max_R=12)
