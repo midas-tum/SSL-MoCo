@@ -92,13 +92,29 @@ If you're interested in collaboration or data access, please contact the authors
 
 ## 🎤 Presentation
 
-Coming soon.
+We presented **SSL-MoCo** at the **2025 ISMRM & ISMRT Annual Meeting & Exhibition**.
+
+🎞️ [▶ Watch the presentation here](https://archive.ismrm.org/2025/0116.html)
+
+> 📝 This presentation was based on an earlier version of our work, submitted as an extended abstract to ISMRM 2025.  
+> The current repository reflects the full version published in *International Workshop on Reconstruction and Imaging Motion Estimation (2025)*.
 
 ---
 
 ## 📝 Citation
 
-*Citation information will be updated soon.*
+If you use this code or find our work helpful, please cite:
+
+```
+@inproceedings{xu2025sslMoCo,
+  title={Self-supervised motion-compensated reconstruction for cardiac Cine MRI},
+  author={Xu, Siying and Ghoul, Aya and Hammernik, Kerstin and Kuebler, Jens and Krumm, Patrick and Lingg, Andreas and Rueckert, Daniel and Gatidis, Sergios and Kuestner, Thomas},
+  booktitle={International Workshop on Reconstruction and Imaging Motion Estimation},
+  pages={97--107},
+  year={2025},
+  organization={Springer}
+}
+```
 
 ## 📬 Contact
 
